@@ -1,19 +1,55 @@
 var userName = "movie";
 var password = "test";
 
-var loginButton = document.getElementById("loginButton");
 
-loginButton.addEventListener("click", function(){
+var page = document.getElementById("content");
 
-    var getUser = document.getElementById("userInput");
-    var getPassword = document.getElementById("userPassword");
+if (localStorage.getItem("userId") !== "null") {
+    greetUser();
+}
+else {
+    showLoginPage();
+}
 
-        if (getUser == userName && getPassword == password)
-        {
-            console.log("we aight");
+function greetUser() {
+    page.innerHTML = "Weclome, master!";
+    page.insertAdjacentHTML("beforeend", "<div><button id='logoutButton'>Log out</button></div>");
+
+    var logoutButton = document.getElementById("logoutButton");
+
+    logoutButton.addEventListener("click", function () {
+        // console.log("this happend");
+        localStorage.removeItem("userId");
+        showLoginPage();
+    });
+
+}
+
+function showErrorPage() {
+    page.insertAdjacentHTML("afterbegin", "<div>Forgot your password?</div>");
+}
+
+function showLoginPage() {
+    page.innerHTML ="";
+    page.insertAdjacentHTML("afterbegin",'username: <input type="text" id="userInput"> password: <input type="password" id="userPassword"> <button id="loginButton">Login</button> ' )
+    var loginButton = document.getElementById("loginButton");
+
+    loginButton.addEventListener("click", function () {
+
+        var getUser = document.getElementById("userInput").value;
+        var getPassword = document.getElementById("userPassword").value;
+
+        if (getUser == userName && getPassword == password) {
+            localStorage.setItem("userId", getUser)
+            console.log(localStorage.getItem("userId"));
+            greetUser();
         }
-        else
-        {
+        else {
             console.log("we not aight");
+            showErrorPage();
         }
-});
+
+    });
+}
+
+
