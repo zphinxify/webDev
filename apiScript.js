@@ -4,8 +4,12 @@ var movieList = document.getElementById("movieList");
 var registerButton = document.getElementById("registerButton");
 
 registerButton.addEventListener("click", function () {
-    studioName = document.getElementById("studioName")
-})
+   var name = document.getElementById("studioName").value;
+   var password = document.getElementById("newPassword").value;
+    
+        addStudio(name, password, true);
+    
+});
 
 // printMovieList();
 
@@ -46,12 +50,13 @@ function addMovie(name, stock) {
             console.log('Error:', error);
         });
 };
-addStudio("Studioname", "123")
+
+// addStudio("Jonte's studio", "123")
 // Adds new studio via POST to the API
 // addStudio("a studio", 1234).then(data => console.log(data));
-/*async*/ function addStudio(name, password) {
+/*async*/ function addStudio(name, password, verified) {
 
-    var data = { name: name, password: password };
+    var data = { name: name, password: password, verified: verified };
 
     /*let response = await*/ fetch('https://localhost:44361/api/FilmStudio', {
         method: 'POST',

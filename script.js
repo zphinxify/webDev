@@ -1,6 +1,3 @@
-var userName = "movie";
-var password = "test";
-
 
 var page = document.getElementById("content");
 
@@ -12,7 +9,10 @@ else {
 }
 
 function greetUser() {
-    page.innerHTML = "Welcome, master!";
+    page.innerHTML = "";
+    var print = "Greetings, ";
+
+
     page.insertAdjacentHTML("beforeend", "<div><button id='logoutButton'>Log out</button></div>");
 
     var logoutButton = document.getElementById("logoutButton");
@@ -30,26 +30,36 @@ function showErrorPage() {
 }
 
 
-function showLoginPage(userName,password) {
+function showLoginPage() {
     page.innerHTML = "";
-    page.insertAdjacentHTML("afterbegin", 'username: <input type="text" id="userInput"> password: <input type="password" id="userPassword"> <button id="loginButton">Login</button> ')
+    page.insertAdjacentHTML("afterbegin", 'username: <input type="text" id="userLogin"> password: <input type="password" id="userPassword"> <button id="loginButton">Login</button> ')
     var loginButton = document.getElementById("loginButton");
 
     loginButton.addEventListener("click", function () {
 
-        var getUser = document.getElementById("userInput").value;
+        var getUser = document.getElementById("userLogin").value;
         var getPassword = document.getElementById("userPassword").value;
 
-        if (getUser == userName && getPassword == password) {
-            localStorage.setItem("userId", getUser)
-            console.log(localStorage.getItem("userId"));
-            greetUser();
-        }
-        else {
-            console.log("we not aight");
-            showErrorPage();
-        }
+        fetch("users.json")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
 
+                for(i=0; i<json.length; i++)
+                {
+                    if (getUser == json[i].userLogin && getPassword == json[i].userPassword) {
+                        localStorage.setItem("userId", getUser)
+                        console.log(localStorage.getItem("userId"));
+                        greetUser();
+                        console.log("SKRRRRR");
+                    }
+                    else {
+                        console.log("we not aight");
+                        showErrorPage();
+                    }
+                }
+            });
     });
 }
 
