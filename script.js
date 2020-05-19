@@ -12,7 +12,7 @@ else {
 }
 
 function greetUser() {
-    page.innerHTML = "Weclome, master!";
+    page.innerHTML = "Welcome, master!";
     page.insertAdjacentHTML("beforeend", "<div><button id='logoutButton'>Log out</button></div>");
 
     var logoutButton = document.getElementById("logoutButton");
@@ -29,9 +29,10 @@ function showErrorPage() {
     page.insertAdjacentHTML("afterbegin", "<div>Forgot your password?</div>");
 }
 
-function showLoginPage() {
-    page.innerHTML ="";
-    page.insertAdjacentHTML("afterbegin",'username: <input type="text" id="userInput"> password: <input type="password" id="userPassword"> <button id="loginButton">Login</button> ' )
+
+function showLoginPage(userName,password) {
+    page.innerHTML = "";
+    page.insertAdjacentHTML("afterbegin", 'username: <input type="text" id="userInput"> password: <input type="password" id="userPassword"> <button id="loginButton">Login</button> ')
     var loginButton = document.getElementById("loginButton");
 
     loginButton.addEventListener("click", function () {
@@ -51,5 +52,7 @@ function showLoginPage() {
 
     });
 }
+
+
 
 
