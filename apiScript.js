@@ -13,28 +13,14 @@ registerButton.addEventListener("click", function () {
 
 // printMovieList();
 
-function printMovieList() {
 
-    fetch("https://localhost:44361/api/Film")
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (json) {
-            console.log("printMovieList", json);
+addMovie("test", 2)
 
-            for (i = 0; i < json.length; i++) {
-                console.log(json[i].name)
-                movieList.insertAdjacentHTML("beforeend", "<div><p>(" + json[i].id + ")" + json[i].name + "</p></div></div>")
-            }
-        });
-};
-
- // addMovie("något annat ", 1337);
 function addMovie(name, stock) {
 
     var data = { name: name, stock: stock };
 
-    fetch('https://localhost:44361/api/Film', {
+    /*let response = await*/ fetch('https://localhost:44361/api/Film', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
@@ -49,14 +35,15 @@ function addMovie(name, stock) {
         .catch((error) => {
             console.log('Error:', error);
         });
+        
+    // await response.json(data);
+   // return data;
 };
 
-// addStudio("Jonte's studio", "123")
-// Adds new studio via POST to the API
-// addStudio("a studio", 1234).then(data => console.log(data));
-/*async*/ function addStudio(name, password, verified) {
 
-    var data = { name: name, password: password, verified: verified };
+function addStudio(name, password) {
+
+    var data = { name: name, password: password };
 
     /*let response = await*/ fetch('https://localhost:44361/api/FilmStudio', {
         method: 'POST',
@@ -73,6 +60,7 @@ function addMovie(name, stock) {
         .catch((error) => {
             console.log('Error:', error);
         });
+        
     // await response.json(data);
    // return data;
 };
