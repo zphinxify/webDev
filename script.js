@@ -21,14 +21,14 @@ function AddMovie(name, stock) {
     var actualStock = stock;
     var stringName = name.toString();
     var intStock = parseInt(actualStock);
-   
+
 
     fetch('https://localhost:44361/api/film', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
         },
-        body: JSON.stringify({stock:intStock, name:stringName}),
+        body: JSON.stringify({ stock: intStock, name: stringName }),
     })
         .then(response => response.json())
         .then(data => {
@@ -65,19 +65,19 @@ function printMovieList() {
 
             for (i = 0; i < json.length; i++) {
                 console.log(json[i].name)
-                movieList.insertAdjacentHTML("beforeend", "<div class='movieDiv'> + <p> Title: " + json[i].name + " | Stock: " + json[i].stock + " </p> <button class='button' id='rentMovie1' onclick='RentMovie(" + json[i].id + ");' >Rent Movie</button> <button class='button' id='addTrivia1' onclick='addTrivia(" + json[i].id + ");' >Add new trivia</button></div>");
+                movieList.insertAdjacentHTML("beforeend", "<div class='movieDiv'> + <p> Title: " + json[i].name + " | Stock: " + json[i].stock + " </p> <button class='button' id='rentMovie1' onclick='RentMovie(" + json[i].id + ");' >Rent Movie</button> <button class='button' id='addTrivia1' onclick='addTrivia(" + json[i].id + ");' >Add new trivia</button> <button class='button' id='showTrivia' onclick='printTrivia(" + json[i].id + ");' >Print Trivia</button></div>");
             }
         });
 };
 
-function rentMovie (FilmId) {
+function rentMovie(FilmId) {
 
     fetch('https://localhost:44361/api/RentedFilm', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
         },
-        body: JSON.stringify({FilmId:movieId, Trivia:trivia}),
+        body: JSON.stringify({ FilmId: movieId, Trivia: trivia }),
     })
         .then(response => response.json())
         .then(data => {
@@ -115,6 +115,38 @@ async function Login() {
     ShowLoginOrLoggedIn();
 }
 
+
+
+function insertDataNewMovie() {
+    page.innerHTML = "";
+    page.insertAdjacentHTML("afterend", 'Name: <input type="text" id="movieName"> Stock: <input type="text" id="stock"> <button id="postNewMovie">Add Movie</button> ')
+
+    var addNewMovie = document.getElementById("postNewMovie");
+    addNewMovie.addEventListener("click", function () {
+        name = document.getElementById("movieName").value;
+        stock = document.getElementById("stock").value
+        AddMovie(name, stock);
+    })
+}
+
+
+function displayTrivia(FilmId) {
+    fetch('https://localhost:44361/api/FilmTrivia')
+        .then(response => response.json())
+        .then(t => t.filter(x => x.filmId == FilmId))
+        .then(t => printTrivia(t))
+        .then(error => console.log(error.message));
+
+}
+
+
+function printTrivia(t) {
+    t.forEach(tr => {
+        page.insertAdjacentHTML("afterend", '<div id="triviaText"><p>Trivia: (' + tr.trivia + ')</p></div>')
+    });
+}
+
+
 function sendTrivia(FilmId, Trivia) {
 
     var trivia = Trivia.toString();
@@ -127,7 +159,7 @@ function sendTrivia(FilmId, Trivia) {
         headers: {
             'Content-type': 'application/json',
         },
-        body: JSON.stringify({FilmId:movieId, Trivia:trivia}),
+        body: JSON.stringify({ FilmId: movieId, Trivia: trivia }),
     })
         .then(response => response.json())
         .then(data => {
@@ -137,19 +169,6 @@ function sendTrivia(FilmId, Trivia) {
             console.log('Error:', error);
         });
 };
-
-
-function insertDataNewMovie() {
-    page.innerHTML = "";
-    page.insertAdjacentHTML("afterend", 'Name: <input type="text" id="movieName"> Stock: <input type="text" id="stock"> <button id="postNewMovie">Add Movie</button> ')
-
-    var addNewMovie = document.getElementById("postNewMovie");
-    addNewMovie.addEventListener("click", function () {
-        name = document.getElementById("movieName").value;
-    stock = document.getElementById("stock").value
-        AddMovie(name, stock);
-    })
-}
 
 
 function addTrivia() {
