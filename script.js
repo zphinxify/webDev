@@ -1,6 +1,6 @@
 
 var page = document.getElementById("content");
-ShowLoginOrLoggedIn();
+checkIfLoggedIn();
 
 var showMovies = document.getElementById("movieButton");
 
@@ -15,6 +15,34 @@ var addNewMovie = document.getElementById("addMovie");
 addNewMovie.addEventListener("click", function () {
     insertDataNewMovie();
 })
+
+var returnMovieButton = document.getElementById("returnMovie");
+
+returnMovieButton.addEventListener("click", function () {
+    page.insertAdjacentHTML("afterend", 'MovieId: <input type="text" id="movieToReturn"><button id="returnRentedMovie">Return Movie</button>')
+    
+    var returnButton = document.getElementById("returnRentedMovie");
+
+    returnButton.addEventListener("click", function(){
+        var movieToReturn = document.getElementById("movieToReturn").value;
+
+    fetch("https://localhost:44361/api/rentedfilm")
+    .then(response => response.json())
+    .catch(error => console.log(error.message))
+    .then(json => deleteReturnedMovie(movieToReturn));
+    });
+
+});
+
+function deleteReturnedMovie(id) {
+    console.log(id);
+    fetch('https://localhost:44361/api/rentedfilm/' + id, {
+        method: 'DELETE',
+    })
+        .then(response => response.json())
+        .catch(error => console.log(error.message));
+        alert("movie has been returned!");
+};
 
 //AddMovie("Something elsawde", 12)
 function AddMovie(name, stock) {
@@ -39,11 +67,10 @@ function AddMovie(name, stock) {
         });
 }
 
-function ShowLoginOrLoggedIn() {
+function checkIfLoggedIn() {
 
     if (localStorage.UserName != null) {
         LoggedIn();
-
 
     }
     else {
@@ -65,30 +92,80 @@ function printMovieList() {
 
             for (i = 0; i < json.length; i++) {
                 console.log(json[i].name)
-                movieList.insertAdjacentHTML("beforeend", "<div class='movieDiv'> + <p> Title: " + json[i].name + " | Stock: " + json[i].stock + " </p> <button class='button' id='rentMovie1' onclick='RentMovie(" + json[i].id + ");' >Rent Movie</button> <button class='button' id='addTrivia1' onclick='addTrivia(" + json[i].id + ");' >Add new trivia</button> <button class='button' id='showTrivia' onclick='printTrivia(" + json[i].id + ");' >Print Trivia</button></div>");
+                movieList.insertAdjacentHTML("beforeend", "<div class='movieDiv'> + <p> Title: " + json[i].name + " | Stock: " + json[i].stock + " </p> <button class='button' id='rentMovie'>Rent Movie</button> <button class='button' id='addTrivia1' onclick='addTrivia(" + json[i].id + ");' >Add new trivia</button> <button class='button' id='showTrivia' onclick='printTrivia(" + json[i].id + ");' >Print Trivia</button></div>");
             }
+
+            
+    
+    page.insertAdjacentHTML("afterend", 'MovieId: <input type="text" id="movieId"><button id="rentMovie">Rent Movie</button>')
+
+            var rentMovieButton = document.getElementById("rentMovie");
+
+            rentMovieButton.addEventListener("click", function () {
+                
+                var id = document.getElementById("movieId").value;
+    
+            fetch("https://localhost:44361/api/film")
+                .then(response => response.json())
+                .catch(error => console.log(error.message))
+                .then(json => rentMovie(json, id));
+    
+        })
         });
+
+        
+
+                
 };
 
-function rentMovie(FilmId) {
 
-    fetch('https://localhost:44361/api/RentedFilm', {
+function rentMovie(json, movieToRentId) {
+
+
+    var lentMovie = json.find(x => x.id == movieToRentId)
+
+    console.log(lentMovie);
+    if (lentMovie.id == movieToRentId) {
+        if (lentMovie.stock == 0) {
+
+            console.log(foo);
+            lentMovie.stock = foo.stock
+
+            console.log("finns inga filmer kompis");
+        }
+        else {
+            lentMovie.stock--;
+
+            addMovieAsRented(lentMovie.id);
+        }
+    }
+}
+
+
+function addMovieAsRented(movieId, filmStudioId) {
+    var data = { filmId: movieId, studioId: filmStudioId };
+
+    localStorage.userId = filmStudioId;
+
+    fetch('https://localhost:44361/api/rentedfilm', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
         },
-        body: JSON.stringify({ FilmId: movieId, Trivia: trivia }),
+        body: JSON.stringify(data),
     })
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
+
         })
         .catch((error) => {
             console.log('Error:', error);
         });
 
-
 }
+
+
 
 async function Login() {
     let user, password = "";
@@ -112,7 +189,7 @@ async function Login() {
         console.log(error);
     }
     location.reload();
-    ShowLoginOrLoggedIn();
+    checkIfLoggedIn();
 }
 
 
@@ -130,20 +207,31 @@ function insertDataNewMovie() {
 }
 
 
-function displayTrivia(FilmId) {
-    fetch('https://localhost:44361/api/FilmTrivia')
-        .then(response => response.json())
-        .then(t => t.filter(x => x.filmId == FilmId))
-        .then(t => printTrivia(t))
-        .then(error => console.log(error.message));
+// function displayTrivia(FilmId) {
+//     fetch('https://localhost:44361/api/FilmTrivia')
+//         .then(response => response.json())
+//         .then(t => t.filter(x => x.filmId == FilmId))
+//         .then(t => printTrivia(t))
+//         .then(error => console.log(error.message));
 
-}
+// }
 
 
-function printTrivia(t) {
-    t.forEach(tr => {
-        page.insertAdjacentHTML("afterend", '<div id="triviaText"><p>Trivia: (' + tr.trivia + ')</p></div>')
-    });
+function printTrivia(Name)
+{
+    fetch("https://localhost:44361/api/filmtrivia")
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json) {
+            console.log("showTrivia", json);
+            
+            for (i = 0; i < json.length; i++) {
+                console.log(json[i].trivia);
+                console.log(json[i].filmId);
+                movieList.insertAdjacentHTML("afterend", "<div class = showTrivia ><p>(" + json[i].filmId + ")" + json[i].trivia + "</p></div></div>")
+            }
+        });
 }
 
 
